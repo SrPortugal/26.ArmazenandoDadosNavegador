@@ -1,6 +1,13 @@
 const form = document.getElementById("novoItem")
 const formLista = document.getElementById("form-lista")
-const itens = []
+// const itens = []
+const itens = JSON.parse(localStorage.getItem("itens")) || []
+
+itens.forEach((e) => {
+    // console.log(e.nome, e.quantidade)
+    criaElementos(e)
+});
+
 form.addEventListener("submit", (e) => {
     e.preventDefault()
     // console.log(e)
@@ -8,33 +15,35 @@ form.addEventListener("submit", (e) => {
     // console.log(e.target.elements['quantidade'].value)
 
     const nome = e.target.elements['nome']
-
     const quantidade = e.target.elements['quantidade']
 
-    criaElementos(nome.value, quantidade.value)
-    
+    const itemAtual = {
+        "nome": nome.value,
+        "quantidade": quantidade.value
+    }
+
+    criaElementos(itemAtual)
+
+    itens.push(itemAtual)
+
+    localStorage.setItem("itens", JSON.stringify(itens))
+
     nome.value = ""
     quantidade.value = ""
 
 })
 
-function criaElementos (nome, quant) {
+function criaElementos (item) {
     const criaLista = document.createElement("li")
     const nuStrong = document.createElement("strong")
-    const textLista = document.createTextNode(nome)
+    const textLista = document.createTextNode(item.nome)
     criaLista.className = "item"
-    nuStrong.textContent = quant
+    nuStrong.textContent = item.quantidade
     criaLista.appendChild(nuStrong)
     criaLista.appendChild(textLista)
     
     formLista.appendChild(criaLista)
 
-    const itemAtual = {
-        "nome": nome,
-        "quantidade": quant
-    }
-    itens.push(itemAtual)
-    localStorage.setItem("item", JSON.stringify(itens))
     
     // return criaLista
 }
