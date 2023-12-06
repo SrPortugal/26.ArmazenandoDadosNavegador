@@ -10,23 +10,30 @@ itens.forEach((e) => {
 
 form.addEventListener("submit", (e) => {
     e.preventDefault()
-    // console.log(e)
-    // console.log(e.target.elements['nome'].value)
-    // console.log(e.target.elements['quantidade'].value)
 
     const nome = e.target.elements['nome']
     const quantidade = e.target.elements['quantidade']
+
+    const existe = itens.find( e => e.nome === nome.value)
 
     const itemAtual = {
         "nome": nome.value,
         "quantidade": quantidade.value
     }
 
-    criaElementos(itemAtual)
+    if (existe){
+        itemAtual.id = existe.id
 
-    itens.push(itemAtual)
+        atualizaElemento(itemAtual)
+    } else {
+        itemAtual.id = itens.length
+        criaElementos(itemAtual)
+        itens.push(itemAtual)
+    }
 
-    localStorage.setItem("itens", JSON.stringify(itens))
+
+    // localStorage.setItem("itens", JSON.stringify(itens))
+    atualizaLocalStorage(itens)
 
     nome.value = ""
     quantidade.value = ""
@@ -39,11 +46,22 @@ function criaElementos (item) {
     const textLista = document.createTextNode(item.nome)
     criaLista.className = "item"
     nuStrong.textContent = item.quantidade
+    nuStrong.setAttribute("data-id", item.id)
     criaLista.appendChild(nuStrong)
     criaLista.appendChild(textLista)
-    
-    formLista.appendChild(criaLista)
 
+    formLista.appendChild(criaLista)
+}
+
+function atualizaElemento (e) {
+
+    itens[e.id].quantidade = e.quantidade
+    document.querySelector(`[data-id="${e.id}"]`).textContent = e.quantidade
+
+    atualizaLocalStorage(itens)
     
-    // return criaLista
+}
+
+function atualizaLocalStorage (e) {
+    localStorage.setItem("itens", JSON.stringify(e))
 }
